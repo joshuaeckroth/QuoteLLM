@@ -24,8 +24,8 @@ plt.figure(figsize=(20, 6))
 pos = 0
 palette_pos = 0
 palettes = [sns.color_palette("deep"), sns.color_palette("pastel"), sns.color_palette("husl", 3)]
-palette = palettes[0] # for when having all lines different colors
-# palette = sns.color_palette() # for when highlighting a few lines in particular
+#palette = palettes[0] # for when having all lines different colors
+palette = sns.color_palette() # for when highlighting a few lines in particular
 
 table_data = []
 legend_data = []
