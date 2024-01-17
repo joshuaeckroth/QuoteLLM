@@ -249,3 +249,14 @@ for model in models_list:
 
 
 
+
+
+constitution
+lorem-ipsum
+song-lyrics
+sueing-works
+published-2023
+random_text
+
+''/Users/skyler/oldLLM/transcripts/
+'/Users/skyler/QuoteLLM/transcripts/GPT-3.5/'
