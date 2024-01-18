@@ -13,7 +13,7 @@ for filename in filenames:
     spaced_title = " ".join(title)
     caps_title = spaced_title.title()
 
-# df = pd.read_csv("/Users/skyler/Desktop/QuoteLLM/results2.0/CSVs/published-2023-results.csv")
+# df = pd.read_csv("/Users/skyler/Desktop/QuoteLLM/results2.0/CSVs/published-post-model-results.csv")
 
     levenshtein_distances = df["levenshtein_distance"]
     optimal_scores = df["optimal_cosine"]

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 csv_path = "/Users/skyler/Desktop/QuoteLLM/results3.0/CSVs/"
 csv_file = csv_path + "works-from-OpenAI-lawsuit-results.csv"
-graph_title = "John Grisham GPT-3.5 Results"
+graph_title = "John Grisham gpt-3.5-turbo Results"
 #graph_path = "/Users/skyler/Desktop/QuoteLLM/results3.0/visualization/levenshtein_histograms/"
 graph_path = "/Users/skyler/Desktop/"
 graph_filename = graph_path + "john-grisham-3.5-histogram.png"

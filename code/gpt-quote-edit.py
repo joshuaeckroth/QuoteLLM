@@ -25,8 +25,6 @@ embedding_model = SentenceTransformer('intfloat/e5-small-v2')
 # nlp = spacy.load("en_core_web_sm")
 token_enc = tiktoken.get_encoding("cl100k_base")
 
-
-
 # change csv variable, graph title and graph filename
 # change transcript file path to specific works directory
 # change repetitions if needed
@@ -34,20 +32,29 @@ token_enc = tiktoken.get_encoding("cl100k_base")
 models_list= ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 
 for model in models_list:
-
     print(model)
+    #directories=["copyright-lawsuit-works","published-post-model"]
+    directories = ["constitution"]
 
-    directories=["fantasy","nytimes-bestselling-romance"]
-    for directory in directories: 
+    # for getting text transcripts (two models have same transcripts)
+    for directory in directories:
+        if (model != "gpt-3.5-turbo"):
+            transcript_folder = "gpt-4" # get gpt-4 and gpt-4-preview transcripts
+        else:
+            transcript_folder = model # gpt3.5
 
-        csv_path = f"/home/haleystinebrickner/QuoteLLM/results-2024-{model}/"
+        # set up filepaths and titles
+        # transcript_path = f"/Users/skyler/Desktop/QuoteLLM/transcripts/{transcript_folder}/*" # for getting transcripts for each model
+        transcript_path = f"/Users/skyler/Desktop/QuoteLLM/transcripts/" # get the transcript path
+        csv_path = f"/Users/skyler/Desktop/QuoteLLM/{model}-results/" # sending csv to results path
         csv_file = csv_path + f"{directory}-results.csv"
-        csv_file_2= csv_path + f"{directory}-results-im-sorry.csv"
-        csv_file_sorry= csv_path + "im-sorry-bad.csv"
+        csv_file_filtered= csv_path + f"{directory}-results-filtered.csv"
+        csv_file_sorry= csv_path + f"{directory}-results-bad.csv"
+
+        graph_path = csv_path + "visualization/" # sending graphs to results path (in graph directory)
+        graph_filename = graph_path + f"{directory}-histogram.png"
+        graph_filename_filtered= graph_path + f"{directory}-histogram-filtered.png"
         graph_title = f"{directory}"
-        graph_path = f"/home/haleystinebrickner/QuoteLLM/results-2024-graphs-{model}/"
-        graph_filename = graph_path + f"{directory}-Histogram.png"
-        graph_filename_2= graph_path + f"{directory}-Histogram-im-sorry.png"
         
         with open(csv_file, "w") as csvfile:
             csvwriter = csv.writer(csvfile)
@@ -55,12 +62,9 @@ for model in models_list:
                 ["model", "file", "randtoken", "randtoken_count", "gt", "gt_portion", "pred", "answer", "levenshtein_distance", "full_pred", "full_answer", "optimal_cosine", "optimal_index", "cosine_scores",
                 "start_token", "end_token"])
 
-        
-        
-
-        
-
-            for transcript_file in glob.glob(f"transcripts/{directory}/*"):
+            # get all the text files in the directory specified
+            # specify directories in the previous list becasue prompt must change slightly from category to category
+            for transcript_file in glob.glob(transcript_path+ f"{transcript_folder}/{directory}/*"):
                 print(transcript_file)
                 file_name= transcript_file.split("/")[-1]
                 title_author= file_name.split(".txt")[0]
@@ -73,11 +77,15 @@ for model in models_list:
                 title = re.sub(r'([a-z])([A-Z])', r'\1 \2', title1)
                 print(title)
                 print(author)
-                
-                prompt= f"Finish the rest of the paragraph. It is from {title} by {author}."
-                print(prompt)
 
-                #for bible versions comment out author and remove from prompt
+                # for novels with title and author
+                # prompt= f"Finish the rest of the paragraph. It is from {title} by {author}."
+                prompt = f"Finish the rest of the paragraph. It is from {title} of the US Constitution."
+                # prompt = f"Finish the rest of the paragraph. It is {directory}."
+                # prompt = f"Finish the rest of the lyric. It is from {title} by {author}."
+                # random text
+                # from the standard lorem ipsum passage
+                print(prompt)
 
                 token_count = 0
                 time.sleep(30)
@@ -206,9 +214,8 @@ for model in models_list:
                                 raise e
 
 
-        # make histogram with i'm sorry
+        # make histogram with bad results included (unfiltered)
         df = pd.read_csv(csv_file)
-
         df = df.sort_values('start_token')
         df.to_csv(csv_file)
         y = df['levenshtein_distance']
@@ -221,42 +228,30 @@ for model in models_list:
         plt.savefig(graph_filename)
         plt.show()
 
-        phrase= "I'm sorry"
+        # find the number of rows with bad answers, put these in a separate csv
         bad_rows= df[df['full_pred'].str.contains("I'm sorry", case=True)]
         print(bad_rows)
         bad_rows2= df[df['full_pred'].str.contains("Sorry", case=True)]
         print(bad_rows2)
         percent_bad= (len(bad_rows)+len(bad_rows2))/len(df)
-        sorrydf= pd.concat[bad_rows2, bad_rows]
+        sorrydf= pd.concat([bad_rows2, bad_rows])
         sorrydf.to_csv(csv_file_sorry)
 
+        # filter out all the bad results from the results file, make a new file, add the percent bad as a new column
         filtered_df=df[~df['full_pred'].str.contains("I'm sorry", case=True)]
         df=df[~df['full_pred'].str.contains("Sorry", case=True)]
         df["Percent Bad"]= percent_bad
-        df.to_csv(csv_file_2)
+        df.to_csv(csv_file_filtered)
         #df = pd.read_csv(csv_file_2)
 
+        # graph histogram from the filtered csv file
         y = df['levenshtein_distance']
         plt.figure(figsize=(20, 6))
         # plt.hist(y, bins = np.arange(min(y), max(y) + 25, 25))
         plt.hist(y)
         plt.xlabel('Levenshtein Distance')
         plt.ylabel('Number of Indices')
-        plt.title(graph_title)
-        plt.savefig(graph_filename_2)
+        plt.title(graph_title + "Filtered Responses")
+        plt.savefig(graph_filename_filtered)
         plt.show()
 
-
-
-
-
-
-constitution
-lorem-ipsum
-song-lyrics
-sueing-works
-published-2023
-random_text
-
-''/Users/skyler/oldLLM/transcripts/
-'/Users/skyler/QuoteLLM/transcripts/GPT-3.5/'
