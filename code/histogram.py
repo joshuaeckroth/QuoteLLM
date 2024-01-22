@@ -70,26 +70,28 @@ for model in models_list:
     bad_rows3 = model_df[model_df['full_pred'].str.contains("I apologize", case=True)]
     print(bad_rows3)
     sorrydf = pd.concat([bad_rows3, bad_rows2, bad_rows])
-    sorrydf.to_csv(csv_file_sorry)
     percent_bad = (len(bad_rows) + len(bad_rows2) + len(bad_rows3)) / len(model_df)
 
-    # filter out all the bad results from the results file, make a new file, add the percent bad as a new column
-    # filter out im sorry from model and save to im_sorry_df
-    im_sorry_df = model_df[~model_df['full_pred'].str.contains("I'm sorry", case=True)]
-    # filter out sorry from im_sorry
-    sorry_df = im_sorry_df[~im_sorry_df['full_pred'].str.contains("Sorry", case=True)]
-    # filter out i apologize
-    filtered_df = sorry_df[~sorry_df['full_pred'].str.contains("I apologize", case=True)]
-    filtered_df["Percent Bad"] = percent_bad
-    filtered_df.to_csv(csv_file_filtered)
+    if percent_bad != 0:
+        # if there are bad results, histogram will look different and do need to save bad and filtered results separately
+        sorrydf.to_csv(csv_file_sorry)
+        # filter out all the bad results from the results file, make a new file, add the percent bad as a new column
+        # filter out im sorry from model and save to im_sorry_df
+        im_sorry_df = model_df[~model_df['full_pred'].str.contains("I'm sorry", case=True)]
+        # filter out sorry from im_sorry
+        sorry_df = im_sorry_df[~im_sorry_df['full_pred'].str.contains("Sorry", case=True)]
+        # filter out i apologize
+        filtered_df = sorry_df[~sorry_df['full_pred'].str.contains("I apologize", case=True)]
+        filtered_df["Percent Bad"] = percent_bad
+        filtered_df.to_csv(csv_file_filtered)
 
-    # graph histogram from the filtered csv file
-    y = filtered_df['levenshtein_distance']
-    plt.figure(figsize=(20, 6))
-    # plt.hist(y, bins = np.arange(min(y), max(y) + 25, 25))
-    plt.hist(y)
-    plt.xlabel('Levenshtein Distance')
-    plt.ylabel('Number of Indices')
-    plt.title(graph_title + " Filtered Responses")
-    plt.savefig(graph_filename_filtered)
-    plt.show()
+        # graph histogram from the filtered csv file
+        y = filtered_df['levenshtein_distance']
+        plt.figure(figsize=(20, 6))
+        # plt.hist(y, bins = np.arange(min(y), max(y) + 25, 25))
+        plt.hist(y)
+        plt.xlabel('Levenshtein Distance')
+        plt.ylabel('Number of Indices')
+        plt.title(graph_title + " Filtered Responses")
+        plt.savefig(graph_filename_filtered)
+        plt.show()
