@@ -19,7 +19,7 @@ import re
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
 embedding_model = SentenceTransformer('intfloat/e5-small-v2')
-#model="gpt-3.5-turbo"
+#model="final-transcripts"
 #model= "gpt-4-1106-preview"
 # Load the English language model
 # nlp = spacy.load("en_core_web_sm")
@@ -29,76 +29,66 @@ token_enc = tiktoken.get_encoding("cl100k_base")
 # change transcript file path to specific works directory
 # change repetitions if needed
 
-models_list= ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
+models_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 
-for model in models_list:
-    print(model)
-    #directories=["copyright-lawsuit-works","published-post-model"]
-    directories = ["constitution"]
 
-    # for getting text transcripts (two models have same transcripts)
-    for directory in directories:
-        if (model != "gpt-3.5-turbo"):
-            transcript_folder = "gpt-4" # get gpt-4 and gpt-4-preview transcripts
-        else:
-            transcript_folder = model # gpt3.5
+#directories=["copyright-lawsuit-works","published-post-model"]
+directories = ["constitution"]
 
-        # set up filepaths and titles
-        # transcript_path = f"/Users/skyler/Desktop/QuoteLLM/transcripts/{transcript_folder}/*" # for getting transcripts for each model
-        transcript_path = f"/Users/skyler/Desktop/QuoteLLM/transcripts/" # get the transcript path
-        csv_path = f"/Users/skyler/Desktop/QuoteLLM/{model}-results/" # sending csv to results path
-        csv_file = csv_path + f"{directory}-results.csv"
-        csv_file_filtered= csv_path + f"{directory}-results-filtered.csv"
-        csv_file_sorry= csv_path + f"{directory}-results-bad.csv"
+# for getting text transcripts (two models have same transcripts)
+for directory in directories:
+    # set up filepaths and titles
+    # transcript_path = f"/Users/skyler/Desktop/QuoteLLM/transcripts/{transcript_folder}/*" # for getting transcripts for each model
+    transcript_path = f"/Users/skyler/Desktop/QuoteLLM/transcripts/final-transcripts/" # get the transcript path
+    csv_path = "/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/" # sending csv to results path
+    csv_file = csv_path + f"{directory}-results.csv"
 
-        graph_path = csv_path + "visualization/" # sending graphs to results path (in graph directory)
-        graph_filename = graph_path + f"{directory}-histogram.png"
-        graph_filename_filtered= graph_path + f"{directory}-histogram-filtered.png"
-        graph_title = f"{directory}"
-        
-        with open(csv_file, "w") as csvfile:
-            csvwriter = csv.writer(csvfile)
-            csvwriter.writerow(
-                ["model", "file", "randtoken", "randtoken_count", "gt", "gt_portion", "pred", "answer", "levenshtein_distance", "full_pred", "full_answer", "optimal_cosine", "optimal_index", "cosine_scores",
-                "start_token", "end_token"])
+    # put all models in same csv -- can filter by model later to make histograms
+    with open(csv_file, "w") as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerow(
+            ["model", "file", "randtoken", "randtoken_count", "gt", "gt_portion", "pred", "answer", "levenshtein_distance", "full_pred", "full_answer", "optimal_cosine", "optimal_index", "cosine_scores",
+            "start_token", "end_token"])
 
-            # get all the text files in the directory specified
-            # specify directories in the previous list becasue prompt must change slightly from category to category
-            for transcript_file in glob.glob(transcript_path+ f"{transcript_folder}/{directory}/*"):
-                print(transcript_file)
-                file_name= transcript_file.split("/")[-1]
-                title_author= file_name.split(".txt")[0]
-                
-                title_author2 = re.sub(r'([a-z])([A-Z])', r'\1 \2', title_author)
+        # get all the text files in the directory specified
+        # specify directories in the previous list becasue prompt must change slightly from category to category
+        for transcript_file in glob.glob(transcript_path+ f"{directory}/*"):
+            print(transcript_file)
+            file_name= transcript_file.split("/")[-1]
+            title_author= file_name.split(".txt")[0]
 
-                author1= title_author.split("-")[-1] 
-                author = re.sub(r'([a-z])([A-Z])', r'\1 \2', author1)
-                title1= title_author.split("-")[0]
-                title = re.sub(r'([a-z])([A-Z])', r'\1 \2', title1)
-                print(title)
-                print(author)
+            title_author2 = re.sub(r'([a-z])([A-Z])', r'\1 \2', title_author)
 
-                # for novels with title and author
-                # prompt= f"Finish the rest of the paragraph. It is from {title} by {author}."
-                prompt = f"Finish the rest of the paragraph. It is from {title} of the US Constitution."
-                # prompt = f"Finish the rest of the paragraph. It is {directory}."
-                # prompt = f"Finish the rest of the lyric. It is from {title} by {author}."
-                # random text
-                # from the standard lorem ipsum passage
-                print(prompt)
+            author1= title_author.split("-")[-1]
+            author = re.sub(r'([a-z])([A-Z])', r'\1 \2', author1)
+            title1= title_author.split("-")[0]
+            title = re.sub(r'([a-z])([A-Z])', r'\1 \2', title1)
+            print(title)
+            print(author)
 
-                token_count = 0
-                time.sleep(30)
-                with open(transcript_file) as t:
-                    [title, transcript] = t.read().split("\n\n", 1)
-                    transcript_lines = transcript.split("\n")
-                    # doc = nlp(transcript)
-                    doc = token_enc.encode(transcript)
-                    print(doc)
-                    print(type(doc))
+            # for novels with title and author
+            # prompt= f"Finish the rest of the paragraph. It is from {title} by {author}."
+            prompt = f"Finish the rest of the paragraph. It is from {title} of the US Constitution."
+            # prompt = f"Finish the rest of the paragraph. It is {directory}."
+            # prompt = f"Finish the rest of the lyric. It is from {title} by {author}."
+            # random text
+            # from the standard lorem ipsum passage
+            print(prompt)
 
-                    repetitions = 200
-                    for repetition in range(repetitions):
+            token_count = 0
+            time.sleep(30)
+            with open(transcript_file) as t:
+                [title, transcript] = t.read().split("\n\n", 1)
+                transcript_lines = transcript.split("\n")
+                # doc = nlp(transcript)
+                doc = token_enc.encode(transcript)
+                print(doc)
+                print(type(doc))
+
+                repetitions = 1
+                for repetition in range(repetitions):
+                    for model in models_list:
+                        print(model)
                         try:
                             # Get a random token index
                             randtoken = random.randint(0, len(doc) - 21)
@@ -124,11 +114,14 @@ for model in models_list:
                             print('Begin quote:', begin_quote_tokens)
                             print()
 
+                            # put the model loop here
                             messages = [
                             {"role": "system",
                             "content": prompt},
                             {"role": "user", "content": token_enc.decode(begin_quote)}
                         ]
+
+
                             completions = openai.ChatCompletion.create(
                                 model=model,
                                 messages=messages,
@@ -213,12 +206,29 @@ for model in models_list:
                             else:
                                 raise e
 
+    # graphing histograms
+    # df = df.sort_values('start_token')
+    # df.to_csv(csv_file)
+
+
+    # separate into three dfs to make histograms
+    for model in models_list:
+        df = pd.read_csv(csv_file)
+        model_df = df[df['model'].eq(model)]
+        print(model_df)
+
+        # set up filtered and bad csv filepaths
+        csv_file_filtered = csv_path + f"{directory}-{model}-results-filtered.csv"
+        csv_file_sorry = csv_path + f"{directory}-{model}-results-bad.csv"
+
+        # set up graph paths and title
+        graph_path = f"/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/histograms/{model}/"  # sending graphs to results path (in graph directory)
+        graph_filename = graph_path + f"{directory}-{model}-histogram.png"
+        graph_filename_filtered = graph_path + f"{directory}-{model}-histogram-filtered.png"
+        graph_title = f"{directory} with {model}"
 
         # make histogram with bad results included (unfiltered)
-        df = pd.read_csv(csv_file)
-        df = df.sort_values('start_token')
-        df.to_csv(csv_file)
-        y = df['levenshtein_distance']
+        y = model_df['levenshtein_distance']
         plt.figure(figsize=(20, 6))
         # plt.hist(y, bins = np.arange(min(y), max(y) + 25, 25))
         plt.hist(y)
@@ -229,29 +239,33 @@ for model in models_list:
         plt.show()
 
         # find the number of rows with bad answers, put these in a separate csv
-        bad_rows= df[df['full_pred'].str.contains("I'm sorry", case=True)]
+        bad_rows= model_df[model_df['full_pred'].str.contains("I'm sorry", case=True)]
         print(bad_rows)
-        bad_rows2= df[df['full_pred'].str.contains("Sorry", case=True)]
-        print(bad_rows2)
-        percent_bad= (len(bad_rows)+len(bad_rows2))/len(df)
-        sorrydf= pd.concat([bad_rows2, bad_rows])
+        bad_rows2= model_df[model_df['full_pred'].str.contains("Sorry", case=True)]
+        bad_rows3 = model_df[model_df['full_pred'].str.contains("I apologize", case=True)]
+        print(bad_rows3)
+        sorrydf = pd.concat([bad_rows3, bad_rows2, bad_rows])
         sorrydf.to_csv(csv_file_sorry)
+        percent_bad= (len(bad_rows)+len(bad_rows2)+len(bad_rows3))/len(model_df)
 
         # filter out all the bad results from the results file, make a new file, add the percent bad as a new column
-        filtered_df=df[~df['full_pred'].str.contains("I'm sorry", case=True)]
-        df=df[~df['full_pred'].str.contains("Sorry", case=True)]
-        df["Percent Bad"]= percent_bad
-        df.to_csv(csv_file_filtered)
-        #df = pd.read_csv(csv_file_2)
+        #filter out im sorry from model and save to im_sorry_df
+        im_sorry_df=model_df[~model_df['full_pred'].str.contains("I'm sorry", case=True)]
+        #filter out sorry from im_sorry
+        sorry_df=im_sorry_df[~im_sorry_df['full_pred'].str.contains("Sorry", case=True)]
+        #filter out i apologize
+        filtered_df = sorry_df[~sorry_df['full_pred'].str.contains("I apologize", case=True)]
+        filtered_df["Percent Bad"]= percent_bad
+        filtered_df.to_csv(csv_file_filtered)
 
         # graph histogram from the filtered csv file
-        y = df['levenshtein_distance']
+        y = filtered_df['levenshtein_distance']
         plt.figure(figsize=(20, 6))
         # plt.hist(y, bins = np.arange(min(y), max(y) + 25, 25))
         plt.hist(y)
         plt.xlabel('Levenshtein Distance')
         plt.ylabel('Number of Indices')
-        plt.title(graph_title + "Filtered Responses")
+        plt.title(graph_title + " Filtered Responses")
         plt.savefig(graph_filename_filtered)
         plt.show()
 

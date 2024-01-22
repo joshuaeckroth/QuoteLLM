@@ -18,12 +18,12 @@ from sentence_transformers import SentenceTransformer, util
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
 embedding_model = SentenceTransformer('intfloat/e5-small-v2')
-model = "gpt-3.5-turbo"
+model = "final-transcripts"
 # Load the English language model
 nlp = spacy.load("en_core_web_sm")
 """
 completions = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
+    model="final-transcripts",
     messages=[{"role": "system", "content": "You are a bot that produces citations for quotes."},
               # {"role": "assistant", "content": "What is the citation for this quote? Also give the surrounding context of the quote, without repeating the quote itself."},
               {"role": "assistant",

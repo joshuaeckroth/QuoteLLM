@@ -27,12 +27,12 @@ import tiktoken
 openai.api_key = os.environ["OPENAI_API_KEY"]
 embedding_model = SentenceTransformer('intfloat/e5-small-v2')
 model= "gpt-4-1106-preview"
-#model="gpt-3.5-turbo"
+#model="final-transcripts"
 # Load the English language model
 #nlp = spacy.load("en_core_web_sm")
 token_enc = tiktoken.get_encoding("cl100k_base")
 
-models_list= ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
+models_list= ["final-transcripts", "gpt-4-1106-preview", "gpt-4"]
 
 for model in models_list:
 
@@ -57,7 +57,7 @@ for model in models_list:
                 ["model", "file", "randtoken", "randtoken_count", "gt", "gt_portion", "pred", "answer", "levenshtein_distance", "full_pred", "full_answer", "optimal_cosine", "optimal_index", "cosine_scores",
                 "start_token", "end_token"])
 
-            #model = "gpt-3.5-turbo"
+            #model = "final-transcripts"
             
 
 

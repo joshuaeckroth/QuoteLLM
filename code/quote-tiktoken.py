@@ -15,16 +15,16 @@ import numpy as np
 import time
 from sentence_transformers import SentenceTransformer, util
 import tiktoken
-# for results3.0 directory with model="gpt-3.5-turbo"
+# for results3.0 directory with model="final-transcripts"
 # for results4.0 directory with model = "gpt-4-1106-preview"
 openai.api_key = os.environ["OPENAI_API_KEY"]
 embedding_model = SentenceTransformer('intfloat/e5-small-v2')
-# model = "gpt-3.5-turbo"
+# model = "final-transcripts"
 model = "gpt-4-1106-preview"
 token_enc = tiktoken.get_encoding("cl100k_base")
 """
 completions = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
+    model="final-transcripts",
     messages=[{"role": "system", "content": "You are a bot that produces citations for quotes."},
               # {"role": "assistant", "content": "What is the citation for this quote? Also give the surrounding context of the quote, without repeating the quote itself."},
               {"role": "assistant",
