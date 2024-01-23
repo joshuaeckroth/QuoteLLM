@@ -85,6 +85,7 @@ for model in models_list:
         filtered_df["Percent Bad"] = percent_bad
         filtered_df.to_csv(csv_file_filtered)
 
+
         # graph histogram from the filtered csv file
         y = filtered_df['levenshtein_distance']
         plt.figure(figsize=(20, 6))

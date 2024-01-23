@@ -32,8 +32,8 @@ token_enc = tiktoken.get_encoding("cl100k_base")
 models_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 
 
-#directories=["copyright-lawsuit-works","published-post-model"]
-directories = ["constitution"]
+directories=["copyright-lawsuit-works","published-post-model"]
+# DONE directories = ["constitution"]
 
 # for getting text transcripts (two models have same transcripts)
 for directory in directories:
@@ -67,12 +67,12 @@ for directory in directories:
             print(author)
 
             # for novels with title and author
-            # prompt= f"Finish the rest of the paragraph. It is from {title} by {author}."
-            prompt = f"Finish the rest of the paragraph. It is from {title} of the US Constitution."
+            prompt= f"Finish the rest of the paragraph. It is from {title} by {author}."
+            # DONE prompt = f"Finish the rest of the paragraph. It is from {title} of the US Constitution."
             # prompt = f"Finish the rest of the paragraph. It is {directory}."
-            # prompt = f"Finish the rest of the lyric. It is from {title} by {author}."
             # random text
             # from the standard lorem ipsum passage
+            # prompt = f"Finish the rest of the lyric. It is from {title} by {author}."
             print(prompt)
 
             token_count = 0
@@ -85,7 +85,7 @@ for directory in directories:
                 print(doc)
                 print(type(doc))
 
-                repetitions = 1
+                repetitions = 200
                 for repetition in range(repetitions):
                     for model in models_list:
                         print(model)
