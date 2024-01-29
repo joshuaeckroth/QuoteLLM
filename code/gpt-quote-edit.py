@@ -33,7 +33,7 @@ models_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 
 
 directories=["copyright-lawsuit-works","published-post-model"]
-# DONE directories = ["constitution"]
+# directories = ["constitution"]
 
 # for getting text transcripts (two models have same transcripts)
 for directory in directories:
@@ -87,30 +87,36 @@ for directory in directories:
 
                 repetitions = 200
                 for repetition in range(repetitions):
+                    # set token values, gt_portion, and begin_quote before looping through models and try statement API call
+                        # so quote being worked with is the same for each model
+                            # a new quote isn't set if an exception occurs--keeps trying with the same quote and model
+                    # Get a random token index
+                    randtoken = random.randint(0, len(doc) - 40)
+                    # token = doc[randtoken].text
+                    starting_point = [doc[randtoken]]
+                    token = token_enc.decode(starting_point)
+                    print(token)
+                    # Get a random number for the substring length
+                    randtoken_count = random.randint(20, 40)
+
+                    # Create a substring
+                    start_token = randtoken - 1
+                    end_token = start_token + randtoken_count
+                    gt_quote = doc[start_token:end_token]  # this is a string
+                    if (len(gt_quote) < 10):
+                        continue  # skip this iteration because it gets funky
+                    print('Gt quote:', gt_quote)
+
+                    gt_portion = random.randint(5, int(0.5 * len(gt_quote)))
+                    begin_quote = gt_quote[:gt_portion]  # this is a string
+                    # begin_quote_tokens = [token.text for token in begin_quote]
+                    begin_quote_tokens = [token_enc.decode([token]) for token in begin_quote]
+
                     for model in models_list:
                         print(model)
                         try:
-                            # Get a random token index
-                            randtoken = random.randint(0, len(doc) - 21)
-                            # token = doc[randtoken].text
-                            starting_point= [doc[randtoken]]
-                            token = token_enc.decode(starting_point)
-                            print(token)
-                            # Get a random number for the substring length
-                            randtoken_count = random.randint(20, 40)
-
-                            # Create a substring
-                            start_token = randtoken-1
-                            end_token = start_token + randtoken_count
-                            gt_quote = doc[start_token:end_token]  # this is a string
-                            if (len(gt_quote) < 10):
-                                continue # skip this iteration because it gets funky
-                            print('Gt quote:', gt_quote)
-
-                            gt_portion = random.randint(5, int(0.5 * len(gt_quote)))
-                            begin_quote = gt_quote[:gt_portion]  # this is a string
-                            # begin_quote_tokens = [token.text for token in begin_quote]
-                            begin_quote_tokens = [token_enc.decode([token]) for token in begin_quote]
+                            print(prompt)
+                            print(model)
                             print('Begin quote:', begin_quote_tokens)
                             print()
 
@@ -195,6 +201,8 @@ for directory in directories:
                             # increment repetitions if try works
                             repetitions += 1
 
+                        # if something goes wrong, still on same quote, still on same model
+                        # so keep trying until this quote goes through for this model
                         except Exception as e:
                             # don't increment repetitions if exception happens, need to get to 200 readings
                             if e:
@@ -210,7 +218,7 @@ for directory in directories:
     # df = df.sort_values('start_token')
     # df.to_csv(csv_file)
 
-
+"""
     # separate into three dfs to make histograms
     for model in models_list:
         df = pd.read_csv(csv_file)
@@ -271,3 +279,4 @@ for directory in directories:
             plt.savefig(graph_filename_filtered)
             plt.show()
 
+"""

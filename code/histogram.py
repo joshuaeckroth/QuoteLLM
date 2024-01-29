@@ -31,6 +31,8 @@ plt.title(graph_title)
 plt.savefig(graph_filename)
 plt.show()
 """
+
+# filter CSVS with bad results (i am sorry, sure, etc)
 directory = "constitution"
 csv_path = "/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/"  # sending csv to results path
 csv_file = csv_path + f"{directory}-results.csv"
