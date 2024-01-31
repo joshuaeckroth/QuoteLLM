@@ -33,7 +33,7 @@ plt.show()
 """
 
 # filter CSVS with bad results (i am sorry, sure, etc)
-directories = ["constitution", "copyright-lawsuit-works", "published-post-model","standard-lorem-ipsum-passage","random-text"]
+directories = ["famous-quote","bible-verse"]
 
 for directory in directories:
     csv_path = "/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/"  # sending csv to results path
