@@ -11,7 +11,7 @@ for model in model_list:
     for filename in filenames:
         df = pd.read_csv(filename)
         file = filename.split("/")[-1]
-        genre = file.split("-results.csv")[0] #Sci-Fi
+        genre = file.split("-gpt")[0] #Sci-Fi
 
         title = genre.split("-")
         spaced_title = " ".join(title)
@@ -45,6 +45,7 @@ for model in model_list:
         print(opt_scores)
         y = opt_scores
         x = levenshtein_distances
+        plt.figure(figsize=(15, 6))
         plt.xlabel("Levenshtein Distance")
         plt.ylabel("Optimal Cosine Score")
         plt.title(f"Levenshtein vs. Optimal Cosine for {caps_title} with {model}")

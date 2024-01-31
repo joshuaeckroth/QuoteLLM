@@ -6,7 +6,7 @@ import pandas as pd
 model_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 
 for model in model_list:
-    filepath = f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/published-post-model'
+    filepath = f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/standard-lorem'
     df_means = pd.DataFrame(columns=['title', 'mean_levenshtein'])
     # all distances under a title need to have the same mean (to rank the means of all titles)
     # loop through all files, putting each title and its respective mean levenshtein distance in a dataframe
