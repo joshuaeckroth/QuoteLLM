@@ -5,16 +5,20 @@ import pandas as pd
 
 model_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 
-for model in model_list:
-    filepath = f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/'
+for model in ['x']: #model_list:
+    #filepath = f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/'
+    filepath = f'results4.0/CSVs/'
     file_data = []
 
     # get mean levenshtein distance and filename from each file
     # add to list as tuple
-    for file in glob.glob(filepath + '*'):
+    for file in glob.glob(filepath + '*-additional-metrics.csv'):
+        print(file)
         df = pd.read_csv(file)
         # get mean distance for file
-        mean = df['levenshtein_distance'].mean()
+        #mean = df['levenshtein_distance'].mean()
+        mean = df['rougeL'].mean()
+        print(df)
         print(mean)
         # get filename from filepath
         filename = file.split('/')[-1]
@@ -22,7 +26,8 @@ for model in model_list:
 
     # Manipulating data for graphing:
     # create a dataframe for exact levenshtein distances and the file's mean ranking as compared to rest of files
-    df_sorted = pd.DataFrame(columns=['ranked_mean', 'levenshtein_distance'])
+    #df_sorted = pd.DataFrame(columns=['ranked_mean', 'levenshtein_distance'])
+    df_sorted = pd.DataFrame(columns=['ranked_mean', 'rougeL'])
     mean_ranking = 0
 
     # sort the means (ascending)
@@ -32,10 +37,12 @@ for model in model_list:
     for pair in file_data:
         # reopen the file from filename
         df = pd.read_csv(filepath + pair[1])
-        distances = df['levenshtein_distance']
+        #distances = df['levenshtein_distance']
+        distances = df['rougeL']
         print(distances)
         # distances = distances /len(df['levenshtein_distance'])
-        print(len(df['levenshtein_distance']))
+        #print(len(df['levenshtein_distance']))
+        print(len(df['rougeL']))
         print(mean_ranking)
         print(pair[0])
         # loop through distance column
@@ -54,7 +61,8 @@ for model in model_list:
     # bin them all, then label each record as being in a bin (count items per bin)
     # then per file(row), get the percent per bin (# items in bin/ # items in the file(row))
     # plt.hist2d(df_sorted['levenshtein_distance'], df_sorted['ranked_mean'], bins=(10, mean_ranking), cmap = 'BuPu')
-    hist, xedges, yedges = np.histogram2d(df_sorted['ranked_mean'], df_sorted['levenshtein_distance'],  bins=[mean_ranking, 10])
+    #hist, xedges, yedges = np.histogram2d(df_sorted['ranked_mean'], df_sorted['levenshtein_distance'],  bins=[mean_ranking, 10])
+    hist, xedges, yedges = np.histogram2d(df_sorted['ranked_mean'], df_sorted['rougeL'],  bins=[mean_ranking, 10])
     # numbers bin divided by total number of reps for that category
 
     # Access, print, count items per bin
@@ -80,9 +88,11 @@ for model in model_list:
     plt.figure(figsize=(15, 6))
     plt.imshow(hist_normalized, origin='lower', cmap='BuPu', extent=[xedges[0], 10, yedges[0], mean_ranking])
     plt.colorbar(label='Frequency')
-    plt.title(f'Distribution of Levenshtein Distances per Category for {model}') # Density heatmap
-    plt.xlabel('Levenshtein Distance')
-    plt.ylabel('Category (Ranked by Mean Levenshtein Distance)')
+    #plt.title(f'Distribution of Levenshtein Distances per Category for {model}') # Density heatmap
+    plt.title(f'Distribution of BLEU Distances per Category for {model}') # Density heatmap
+    #plt.xlabel('Levenshtein Distance')
+    plt.xlabel('BLEU')
+    plt.ylabel('Category (Ranked by Mean)')
     x_bins = np.arange(0, 10) # 0-9
     y_bins = np.arange(0, mean_ranking) # 0-8
     plt.xticks(x_bins.tolist(), [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
@@ -96,7 +106,7 @@ for model in model_list:
         cut_names.append(cut_name)
     plt.yticks(y_bins.tolist(), cut_names)
     # save and show results
-    plt.savefig(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/2d_histograms/categories-2d-histogram-{model}.png')
+    plt.savefig(f'results4.0/visualization/categories-2d-histogram-{model}.png')
     plt.show()
 
 
