@@ -10,6 +10,8 @@ from statsmodels.distributions.empirical_distribution import ECDF
 # sort the legend
 
 model_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
+df_all = pd.DataFrame()
+color_title = {}
 
 for model in model_list:
     # for all lines different colors
@@ -62,14 +64,18 @@ for model in model_list:
             scores.append(opt_score)
 
         # print(scores)
-        # plot the line with each line being a different color
-
+        # make sure no color palettes repeat
         if pos > 9:
             pos = 0
             palette = palettes[palette_pos+1]
-        sns.ecdfplot(scores, label = caps_title, color = palette[pos])
+        # plot the line
         color = palette[pos]
+        if model == model_list[0]:
+            color_title[caps_title] = color
+        print(color_title)
+        sns.ecdfplot(scores, label = caps_title, color = color_title[caps_title])
         pos+=1
+
 
         # plot the line with specific colors for a few lines only
         """
@@ -86,8 +92,9 @@ for model in model_list:
         ecdf = ECDF(scores)
         ecdf_sum = np.sum(ecdf(np.arange(0.0, 1.0, 0.05)))
         table_data.append([caps_title, ecdf_sum])
+        #table_data.append([caps_title, ecdf_sum])
         # legend_data.append([handle, ecdf_sum])
-        legend_data.append([color, ecdf_sum])
+        legend_data.append([color_title[caps_title], ecdf_sum])
 
         #plt.hist()
         #ax.ecdf(scores,  label = caps_title, color = palette[pos])
@@ -124,8 +131,22 @@ for model in model_list:
     plt.savefig(graph_filename)
     plt.show()
 
-    # format the table plot
+
+    # format as latex table
     print(table_data)
+    df = pd.DataFrame(table_data, columns = ['Category', f'{model} scores'])
+    print(df)
+    if model == "gpt-3.5-turbo":
+        df_all['Category'] = df['Category']
+    df_all = df_all.merge(df, on = 'Category', how = 'left')
+    with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_ecdfs/cosine-ecdf-table-{model}.tex', 'w') as tf:
+        tf.write(df.to_latex(index=False))
+with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_ecdfs/cosine-ecdf-table.tex', 'w') as tf:
+    tf.write(df_all.to_latex(index=False))
+
+
+    # format the table plot
+    """
     plt.figure(figsize=(8, 8))  # Adjust figure size if needed
     table = plt.table(cellText=sorted_table, loc='center', cellLoc='center', colLabels=['Category', 'Area Under Curve'], edges='closed')
     table.auto_set_font_size(False)
@@ -133,8 +154,9 @@ for model in model_list:
     table.scale(1.5, 1.5)  # Adjust the scale of the table if needed
     plt.axis('off')
     plt.title(f'Table of Areas under Empirical CDF Curves for {model}')
-    plt.savefig(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_ecdfs/cosine-ecdf-table-{model}.png')
-    plt.show()
+    #plt.savefig(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_ecdfs/cosine-ecdf-table-{model}.png')
+    #plt.show()
+    """
 
     """
     # sort the table_data for trapz area method
