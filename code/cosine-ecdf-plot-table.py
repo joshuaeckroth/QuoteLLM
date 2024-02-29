@@ -15,14 +15,14 @@ color_title = {}
 
 for model in model_list:
     # for all lines different colors
-    graph_filename = f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_ecdfs/cosine-ecdf-plot-{model}.png'
+    graph_filename = f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/ecdfs/cosine_ecdfs/cosine-ecdf-plot-{model}.png'
     # for some lines highlighted
     # graph_filename = '/Users/skyler/Desktop/QuoteLLM/results3.0/visualization/cosine-ecdf-plot-refined.png'
     # df = pd.read_csv('/Users/skyler/Desktop/QuoteLLM/results2.0/CSVs/bible-Versions-results.csv')
 
     graph_title = f"Cosine Vector Comparison Scores for {model}"
     #graph_filename = '/Users/skyler/Desktop/QuoteLLM/results2.0/density_plots/cosine-density-plot.png'
-    filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/*') # get most recent files
+    filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/*.csv3') # get most recent files
     plt.figure(figsize=(20, 6))
 
     pos = 0
@@ -90,8 +90,9 @@ for model in model_list:
         """
 
         ecdf = ECDF(scores)
-        ecdf_sum = np.sum(ecdf(np.arange(0.0, 1.0, 0.05)))
-        table_data.append([caps_title, ecdf_sum])
+        ecdf_sum = np.sum(ecdf(np.arange(0.0, 1.05, 0.001)))
+        table_data.append([caps_title, ecdf_sum*0.001])
+        print()
         #table_data.append([caps_title, ecdf_sum])
         # legend_data.append([handle, ecdf_sum])
         legend_data.append([color_title[caps_title], ecdf_sum])
@@ -110,9 +111,21 @@ for model in model_list:
 
     # sort the table_data for area method and use in ecdf legend
     sorted_table = sorted(table_data, key=lambda tup: tup[1])
+    print("Sorted table")
+    minimum_value = sorted_table[0][1]
+    maximum_value = sorted_table[-1][1]
+    print(sorted_table)
+    print(minimum_value)
+    print(maximum_value)
+    for x in range (len(sorted_table)):
+        sorted_table[x][1]=1-((sorted_table[x][1]-minimum_value)/(maximum_value-minimum_value))
+    minimum_value = sorted_table[0][1]
+    maximum_value = sorted_table[-1][1]
+    print(minimum_value)
+    print(maximum_value)
     print(sorted_table)
     # sort legend data
-    sorted_legend = sorted(legend_data, key=lambda tup: tup[1])
+    sorted_legend = sorted(legend_data, key=lambda tup: tup[1], reverse = True)
     print(legend_data)
     print(list(zip(*sorted_legend))[0])
 
@@ -139,9 +152,9 @@ for model in model_list:
     if model == "gpt-3.5-turbo":
         df_all['Category'] = df['Category']
     df_all = df_all.merge(df, on = 'Category', how = 'left')
-    with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_ecdfs/cosine-ecdf-table-{model}.tex', 'w') as tf:
+    with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/ecdfs/cosine_ecdfs/cosine-ecdf-table-{model}.tex', 'w') as tf:
         tf.write(df.to_latex(index=False))
-with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_ecdfs/cosine-ecdf-table.tex', 'w') as tf:
+with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/ecdfs/cosine_ecdfs/cosine-ecdf-table.tex', 'w') as tf:
     tf.write(df_all.to_latex(index=False))
 
 
@@ -222,3 +235,13 @@ with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosi
     plt.savefig(graph_filename)
     plt.show()
     """
+
+#divide by range
+
+#subtract
+
+
+#store the sum of the ecdf function, then update the values by sutracting the min, and then divide that result by the max-min
+# so the new max will be the 1.0 case
+
+# this is just for the table not the graph

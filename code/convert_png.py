@@ -15,11 +15,11 @@ def convert_to_150_dpi(input_path, output_path):
 
 
 def main():
-    for image_path in glob.glob('/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/*/*'):
+    for image_path in glob.glob('/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/ecdfs/*.tex'):
         image_name = image_path.split('/')[-1]
         if (image_name.split('.')[-1] != 'tex'):
             print(image_name)
-            output_path = '/Users/skyler/Desktop/QuoteLLM/all-models-results/dpi_visualization/' + image_name
+            output_path = '/Users/skyler/Desktop/QuoteLLM/all-models-results/dpi_visualization/other_metrics/' + image_name
             convert_to_150_dpi(image_path, output_path)
         else:
             print()

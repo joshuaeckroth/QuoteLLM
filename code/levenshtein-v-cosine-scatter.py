@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 model_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 for model in model_list:
 
-    filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/*')
+    filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/*.csv3')
     for filename in filenames:
         df = pd.read_csv(filename)
         file = filename.split("/")[-1]
@@ -18,8 +18,8 @@ for model in model_list:
         caps_title = spaced_title.title()
 
     # df = pd.read_csv("/Users/skyler/Desktop/QuoteLLM/results2.0/CSVs/published-post-model-results.csv")
-
-        levenshtein_distances = df["levenshtein_distance"]
+        metric = "rougeL"
+        metric_scores = df[f"{metric}"]
         optimal_scores = df["optimal_cosine"]
 
         """
@@ -44,12 +44,12 @@ for model in model_list:
 
         print(opt_scores)
         y = opt_scores
-        x = levenshtein_distances
+        x = metric_scores
         plt.figure(figsize=(15, 6))
-        plt.xlabel("Levenshtein Distance")
+        plt.xlabel(f"{metric.upper()} Score")
         plt.ylabel("Optimal Cosine Score")
-        plt.title(f"Levenshtein vs. Optimal Cosine for {caps_title} with {model}")
+        plt.title(f"{metric.upper()} vs. Optimal Cosine for {caps_title} with {model}")
         plt.scatter(x, y)  # Plot the chart
         plt.gca().invert_yaxis()
-        plt.savefig(f"/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_levenshtein_scatter_plots/{genre}_levenshtein_v_cosine-{model}.png")
+        plt.savefig(f"/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_{metric}_scatter_plots/{genre}_{metric}_v_cosine-{model}.png")
         plt.show()  # display
