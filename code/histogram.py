@@ -1,37 +1,36 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import glob
+
+model_list = ["gpt-3.5-turbo"]
+prompt_type = "no-author"
+for model in model_list:
+
+    #filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/*.csv3')
+    filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{prompt_type}-*')
+    for filename in filenames:
+        df = pd.read_csv(filename)
+        file = filename.split("/")[-1]
+        genre1 = file.split("-gpt")[0] #Sci-Fi # no-author-fantasy
+        genre = genre1.split(f"{prompt_type}-")[-1] # fantasy
+
+        title = genre.split("-")
+        spaced_title = " ".join(title)
+        caps_title = spaced_title.title()
+
+        # make histogram with bad results included (unfiltered)
+        y = df['levenshtein_distance']
+        plt.figure(figsize=(20, 6))
+        # plt.hist(y, bins = np.arange(min(y), max(y) + 25, 25))
+        plt.hist(y)
+        plt.xlabel('Levenshtein Distance')
+        plt.ylabel('Number of Indices')
+        plt.title(f"Levenshtein Distance Distribution for {caps_title} with {model}")
+        plt.savefig(f"/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/{prompt_type}-visualization/{genre}_histogram-{prompt_type}.png")
+        plt.show()  # display
+
 
 """
-csv_path = "/Users/skyler/Desktop/QuoteLLM/results3.0/CSVs/"
-csv_file = csv_path + "works-from-OpenAI-lawsuit-results.csv"
-graph_title = "John Grisham final-transcripts Results"
-#graph_path = "/Users/skyler/Desktop/QuoteLLM/results3.0/visualization/levenshtein_histograms/"
-graph_path = "/Users/skyler/Desktop/"
-graph_filename = graph_path + "john-grisham-3.5-histogram.png"
-
-# make histogram
-df = pd.read_csv(csv_file)
-df = df.sort_values('start_token')
-#df.to_csv(csv_file)
-
-#filter dataframe by title if needed
-#filtered_df = df[df['file'].apply(lambda x: 'The Firm' in x)].loc[:, 'levenshtein_distance']
-filtered_df = df[df['file'].apply(lambda x: 'The Firm' in x)]
-filtered_df.to_csv('/Users/skyler/Desktop/grisham_3.5.csv')
-filtered_df = pd.read_csv('/Users/skyler/Desktop/grisham_3.5.csv')
-#y = filtered_df['levenshtein_distance']
-#y = df['levenshtein_distance']
-plt.figure(figsize=(20, 6))
-plt.hist(filtered_df['levenshtein_distance'])
-# plt.hist(y, bins = np.arange(min(y), max(y) + 25, 25))
-#plt.hist(y)
-plt.xlabel('Levenshtein Distance')
-plt.ylabel('Number of Indices')
-plt.title(graph_title)
-plt.savefig(graph_filename)
-plt.show()
-"""
-
 # filter CSVS with bad results (i am sorry, sure, etc)
 directories = ["popular-slogan","bible-versions"]
 
@@ -103,4 +102,6 @@ for directory in directories:
             plt.savefig(graph_filename_filtered)
             plt.show()
         else: # no bad results for this model, save the model df plainly
-            model_df.to_csv(csv_path + f"{model}/{directory}-{model}-results.csv")
+           # model_df.to_csv(csv_path + f"{model}/{directory}-{model}-results.csv")
+
+"""
