@@ -6,8 +6,10 @@ import glob
 models_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 
 for model in models_list:
-    csv_path = f"/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/"  # sending csv to results path
-    for csv_file in glob.glob(csv_path + f"{model}/*.csv2"):
+    csv_path = f"/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/"# sending csv to results path
+    filter_files = ['/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/gibberish-article-results.csv']
+    # for csv_file in glob.glob(csv_path + f"{model}/*.csv2"):
+    for csv_file in filter_files:
         # read additional metric file as a df
         df = pd.read_csv(csv_file)
         filename = csv_file.split('/')[-1]
@@ -16,7 +18,9 @@ for model in models_list:
         csv_file_sorry = csv_path + f"bad-responses/{filename}" # different from others
 
         new_filename = filename.split('.csv')[0]
-        csv_file_filtered = csv_path + f"{model}/{new_filename}.csv3"
+
+        #csv_file_filtered = csv_path + f"{model}/{new_filename}.csv3"
+        csv_file_filtered = csv_path + f"{model}/{new_filename}.csv"
 
         # find the number of rows with bad answers, put these in a separate csv
         bad_rows = df[df['full_pred'].str.startswith("I'm sorry")]

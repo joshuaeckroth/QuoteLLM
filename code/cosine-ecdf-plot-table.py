@@ -9,24 +9,28 @@ from statsmodels.distributions.empirical_distribution import ECDF
 # sort the table by area
 # sort the legend
 
-#model_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
-model_list = ["gpt-3.5-turbo"]
+model_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 df_all = pd.DataFrame()
+df1 = pd.DataFrame()
+df2 = pd.DataFrame()
+df3= pd.DataFrame()
 color_title = {}
-prompt_type = 'random-author'
+
 
 for model in model_list:
     # for all lines different colors
     #graph_filename = f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/ecdfs/cosine_ecdfs/cosine-ecdf-plot-{model}.png'
-    graph_filename = f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine-ecdf-plot-{model}-{prompt_type}.png'
+    graph_filename = f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine-ecdf-plot-{model}.png'
     # for some lines highlighted
     # graph_filename = '/Users/skyler/Desktop/QuoteLLM/results3.0/visualization/cosine-ecdf-plot-refined.png'
     # df = pd.read_csv('/Users/skyler/Desktop/QuoteLLM/results2.0/CSVs/bible-Versions-results.csv')
 
-    graph_title = f"Cosine Vector Comparison Scores for {prompt_type} with {model}"
+    graph_title = f"Cosine Vector Comparison Scores with {model}"
     #graph_filename = '/Users/skyler/Desktop/QuoteLLM/results2.0/density_plots/cosine-density-plot.png'
     #filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/*.csv3') # get most recent files
-    filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{prompt_type}*')
+    filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/*.csv3')
+    filenames.append(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/gpt-results.csv')
+    filenames.append(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/gibberish-article-results.csv')
     plt.figure(figsize=(20, 6))
 
     pos = 0
@@ -43,9 +47,9 @@ for model in model_list:
         df = pd.read_csv(filename)
         file = filename.split("/")[-1]
         genre1 = file.split("-gpt")[0] #Sci-Fi # no-author-fantasy
-        genre =  genre1.split(f"{prompt_type}-")[-1] # fantasy
+        # genre =  genre1.split(f"{prompt_type}-")[-1] # fantasy
 
-        title = genre.split("-")
+        title = genre1.split("-")
         spaced_title = " ".join(title)
         caps_title = spaced_title.title()
         # graph_name = genre+"-density-plot.csv"
@@ -152,19 +156,24 @@ for model in model_list:
 
     # format as latex table
     print(table_data)
+
+
     df = pd.DataFrame(table_data, columns = ['Category', f'{model} scores'])
     print(df)
     if model == "gpt-3.5-turbo":
         df_all['Category'] = df['Category']
     # df_all = df_all.merge(df, on = 'Category', how = 'left')
         df_all = df
+    else:
+        pd.concat([df_all, df])
     #with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/ecdfs/cosine_ecdfs/cosine-ecdf-table-{model}.tex', 'w') as tf:
     with open(
-            f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/{prompt_type}-visualization/cosine-ecdf-table-{model}-{prompt_type}.tex',
+            f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/ecdfs/cosine-ecdf-table-{model}.tex',
             'w') as tf:
         tf.write(df.to_latex(index=False))
+
 # with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/ecdfs/cosine_ecdfs/cosine-ecdf-table.tex', 'w') as tf:
-with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/{prompt_type}-visualization/cosine-ecdf-table-{prompt_type}.tex',
+with open(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/ecdfs/cosine-ecdf-table.tex',
             'w') as tf:
     tf.write(df_all.to_latex(index=False))
 

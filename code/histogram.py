@@ -2,6 +2,26 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import glob
 
+model_list = ["gpt-3.5-turbo" , "gpt-4-1106-preview", "gpt-4"]
+
+for model in model_list:
+
+    filenames = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/gpt-results.csv')
+    for filename in filenames:
+        df = pd.read_csv(filename)
+        df = df[df['model'] == model]
+        df.to_csv(filename)
+        # make histogram with bad results included (unfiltered)
+        y = df['levenshtein_distance']
+        plt.figure(figsize=(20, 6))
+        # plt.hist(y, bins = np.arange(min(y), max(y) + 25, 25))
+        plt.hist(y)
+        plt.xlabel('Levenshtein Distance')
+        plt.ylabel('Number of Indices')
+        plt.title(f"Levenshtein Distance Distribution for GPT Story with {model}")
+        plt.savefig(f"/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/histograms/gpt-story-{model}-histogram.png")
+        plt.show()  # display
+"""
 model_list = ["gpt-3.5-turbo"]
 prompt_type = "no-author"
 for model in model_list:
@@ -28,7 +48,7 @@ for model in model_list:
         plt.title(f"Levenshtein Distance Distribution for {caps_title} with {model}")
         plt.savefig(f"/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/{prompt_type}-visualization/{genre}_histogram-{prompt_type}.png")
         plt.show()  # display
-
+"""
 
 """
 # filter CSVS with bad results (i am sorry, sure, etc)

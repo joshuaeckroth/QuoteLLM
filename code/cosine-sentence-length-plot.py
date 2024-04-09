@@ -10,10 +10,8 @@ row_num = 5
 #choose csv
 start_token = 0
 end_token = 0
-model_list = ["gpt-4-1106-preview", "gpt-3.5-turbo", "gpt-4"]
-plt.xlabel("Token Count")
-plt.ylabel("Cosine Score")
-
+#model_list = ["gpt-4-1106-preview", "gpt-3.5-turbo", "gpt-4"]
+"""
 for model in model_list:
     filename = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/{model}/famous-quote*')
     print(filename[0])
@@ -24,8 +22,24 @@ for model in model_list:
     title = genre.split("-")
     spaced_title = " ".join(title)
     caps_title = spaced_title.title() # "Quotes"
-    #suing-works
-        # row number: 8
+"""
+plt.xlabel("Token Count")
+plt.ylabel("Cosine Score")
+model_list = ["gpt-3.5-turbo"]
+prompt_type = "random-author"
+for model in model_list:
+
+    filename = glob.glob(f'/Users/skyler/Desktop/QuoteLLM/all-models-results/CSVs/no-author-constitution-gpt-3.5-turbo-results-results.csv')
+    df = pd.read_csv(filename)
+    file = filename.split("/")[-1]
+    genre1 = file.split("-gpt")[0] #Sci-Fi # no-author-fantasy
+    genre =  genre1.split(f"{prompt_type}-")[-1] # fantasy
+
+    title = genre.split("-")
+    spaced_title = " ".join(title)
+    caps_title = spaced_title.title()
+#suing-works
+# row number: 8
     # change row number to graph different quote (based on start token)
     if model == model_list[0]:
         start_token = df.iloc[row_num]["start_token"]
@@ -86,6 +100,8 @@ for model in model_list:
 
 plt.title(f"Cosine Score per Sentence Length for {caps_title}")
 plt.legend()
-plt.savefig(f"/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_sentence_length_plots/{genre}_cosine_scores_{row_num}_{start_token}_{end_token}.png")
+#plt.savefig(f"/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/cosine_sentence_length_plots/{genre}_cosine_scores_{row_num}_{start_token}_{end_token}.png")
+    # 8 is index in dataframe not index in excel -- index in excel is 10
+plt.savefig(f"/Users/skyler/Desktop/QuoteLLM/all-models-results/visualization/{prompt_type}-visualization/{genre}_cosine_scores_{row_num}_{start_token}_{end_token}-{prompt_type}.png")
     # 8 is index in dataframe not index in excel -- index in excel is 10
 plt.show()  # display
