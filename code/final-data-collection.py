@@ -36,6 +36,7 @@ models_list = ["gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4"]
 # directories=["bible-versions"]
 directories = ["gibberish-article"]
 
+
 # for getting text transcripts (two models have same transcripts)
 for directory in directories:
     # set up filepaths and titles
