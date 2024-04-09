@@ -90,7 +90,7 @@ directories_prompt3=["bible-versions", "bible-verses", "random_text", "standard-
 directories_prompt4=["song-lyrics"]
 directories_prompt5=["gpt"]
 
-csv_path = "/home/haleystinebrickner/QuoteLLM/all-results/"
+csv_path = '../all-models-results/CSVS/'
 csv_file = csv_path + "quotellm-results.csv"
 
 with open(csv_file, "w") as csvfile:
@@ -105,7 +105,7 @@ for directory in directories:
     print(directory)
 
     
-    for transcript_file in glob.glob(f"transcripts/{directory}/*"):
+    for transcript_file in glob.glob(f'../transcripts/final-transcripts/{directory}/*'):
         print(transcript_file)
 
         if directory in directories_prompt1:
