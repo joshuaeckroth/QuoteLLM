@@ -38,3 +38,4 @@ print(len(df))
 # TODO: fix random text filenames
 # TODO: fix nytimes filenames
 # TODO: get all transcripts in github # don't push the transcripts becuase copyrighting
+# TODO: get gpt-4-preivew in all_data filename issue
