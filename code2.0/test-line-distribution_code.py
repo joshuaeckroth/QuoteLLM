@@ -26,10 +26,11 @@ def line_distribution(file, metric, filepath):
     print(df)
     print(df.columns)
     models = ['gpt-3.5-turbo', 'gpt-4-1106-preview', 'gpt-4'] # TODO: make a tuple?
-    sub_location = [4, 6, 8]
+    sub_location = [1, 2, 3]
     pos = 0
     for model in models:
-        ax = plt.subplot(sub_location[pos], 1, 4)
+        # ax = plt.subplot(sub_location[pos], 1, 4)
+        ax = plt.subplot(6, 1, (1, sub_location[pos]))
         pos += 1
         setup_line_distribution(ax)
         ax.xaxis.set_major_locator(ticker.AutoLocator())
@@ -39,14 +40,14 @@ def line_distribution(file, metric, filepath):
         categories = df['Category'].tolist()
         index = 0
         for val in model_vals:
-            plt.plot(val, 0, '|' , ms = 50, label= df.loc[index, 'Category']) # TODO: make sure all colors line up across models
+            plt.plot(val, 0, '|' , ms = 75, label= df.loc[index, 'Category']) # TODO: make sure all colors line up across models
             # plt.text(val, 1, df.loc[index, 'Category'], fontsize=6, horizontalalignment='right', rotation=90)
             index += 1
     plt.title('ECDF Scores per Model and Category')
-    plt.legend() # TODO: fix legend location, label, and marker
-    plt.savefig('../line_distribution.png')
+    plt.legend(bbox_to_anchor=(0.5, -1.25), loc='lower center', markerscale=0.1) # TODO: fix legend location, label, and marker
+    plt.savefig('../line_distribution.png', dpi = 300)
     plt.show()
-    # TODO: plot spacing in figure size
+    # TODO: sort legend by average olphabetically?
 
 
 if __name__ == '__main__':

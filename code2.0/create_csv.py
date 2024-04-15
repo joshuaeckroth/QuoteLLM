@@ -1,6 +1,6 @@
 import glob
 import pandas as pd
-"""
+
 root_path = '../all-models-results/CSVs/'
 models = ['gpt-3.5-turbo', 'gpt-4-preview-1106', 'gpt-4']
 
@@ -34,7 +34,7 @@ for index, group in categories:
     print(index)
     print(group['file'].unique())
 print(len(df))
-
+"""
 # TODO: fix random text filenames
 # TODO: fix nytimes filenames
 # TODO: get all transcripts in github # don't push the transcripts becuase copyrighting
