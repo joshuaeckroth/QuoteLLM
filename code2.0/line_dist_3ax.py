@@ -25,8 +25,6 @@ def line_distribution(file, metric, filepath):
     plt.figure(figsize=(8, 6))
     fig, axs = plt.subplots(6, 1, figsize=(8, 6))
     df = Table.read('../all-models-results/visualization/ecdfs/bleu-ecdf-table.tex').to_pandas()
-    print(df)
-    print(df.columns)
     models = ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-1106-preview']
     pos = 0
     shift_left = ['Copyright Lawsuit Works', 'Fantasy', 'Famous Quote']

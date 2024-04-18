@@ -24,8 +24,6 @@ def line_distribution(file, metric, filepath):
     # df = pd.read_csv(file)
     plt.figure(figsize=(8, 6))
     df = Table.read('../all-models-results/visualization/ecdfs/bleu-ecdf-table.tex').to_pandas()
-    print(df)
-    print(df.columns)
     models = ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-1106-preview'] # TODO: make a tuple?
     sub_location = [1, 2, 3]
     pos = 0
