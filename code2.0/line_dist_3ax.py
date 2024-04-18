@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib import ticker
+from matplotlib import ticker, gridspec
 from astropy.table import Table
 
 def setup_line_distribution(ax):
@@ -23,62 +23,59 @@ def setup_line_distribution(ax):
 def line_distribution(file, metric, filepath):
     # df = pd.read_csv(file)
     plt.figure(figsize=(8, 6))
+    fig, axs = plt.subplots(6, 1, figsize=(8, 6))
     df = Table.read('../all-models-results/visualization/ecdfs/bleu-ecdf-table.tex').to_pandas()
     print(df)
     print(df.columns)
-    models = ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-1106-preview'] # TODO: make a tuple?
-    sub_location = [1, 2, 3]
+    models = ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-1106-preview']
     pos = 0
     shift_left = ['Copyright Lawsuit Works', 'Fantasy', 'Famous Quote']
 
     for model in models:
-        # ax = plt.subplot(sub_location[pos], 1, 4)
-        ax = plt.subplot(6, 1, (1, sub_location[pos]))
-        # axs[0].scatter(categories, subplot1_points, color='blue')
-        pos += 1
-        setup_line_distribution(ax)
-        if pos == 3:
-            ax.xaxis.set_major_locator(ticker.AutoLocator())
-            ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-            ax.text(0.0, 0.1, model, fontsize=8, transform=ax.transAxes)
+        # Plot points on each subplot
+        setup_line_distribution(axs[pos])
+        if pos == 2:
+            axs[pos].xaxis.set_major_locator(ticker.AutoLocator())
+            axs[pos].xaxis.set_minor_locator(ticker.AutoMinorLocator())
+            axs[pos].text(0.0, 0.1, model, fontsize=8, transform=axs[pos].transAxes)
         else :
-            ax.xaxis.set_major_locator(ticker.NullLocator())
-            ax.text(0.0, 0.1, model, fontsize=8, transform=ax.transAxes)
+            axs[pos].xaxis.set_major_locator(ticker.NullLocator())
+            axs[pos].text(0.0, 0.1, model, fontsize=8, transform=axs[pos].transAxes)
 
         model_vals = df[f'{model}'].tolist()
 
         index = 0
         for val in model_vals:
             # plt.plot(val, 0, '|' , ms = 75, label= df.loc[index, 'Category'])
-            plt.plot(val, 0, '|', ms=75, label=df.loc[index, 'Category'])
+            axs[pos].plot(val, 0, '|', ms=75, label=df.loc[index, 'Category'])
             print(df.loc[index, 'Category'])
-            if pos == 3:
+            if pos == 2:
                 if df.loc[index, 'Category'] in (shift_left):
-                    plt.text(val-0.02, -0.15, df.loc[index, 'Category'], fontsize=10, verticalalignment='top', rotation=270)
+                    axs[pos].text(val-0.02, -0.15, df.loc[index, 'Category'], fontsize=10, verticalalignment='top', rotation=270)
                 else:
-                    plt.text(val, -0.15, df.loc[index, 'Category'], fontsize=10, verticalalignment='top', rotation=270)
+                    axs[pos].text(val, -0.15, df.loc[index, 'Category'], fontsize=10, verticalalignment='top', rotation=270)
             index+=1
+        pos += 1
 
-    plt.title('ECDF Scores per Model and Category')
-    # plt.legend(bbox_to_anchor=(0.5, -1.25), loc='lower center', markerscale=0.1)
-    plt.savefig('../line_distribution.png', dpi = 300)
-    plt.show()
-"""
-    # model[0] y =1
-    # model[0] x-list
     # Create value and category lists
     categories = df.Category.unique()
     gpt_1 = df['gpt-3.5-turbo'].tolist()
     gpt_2 = df['gpt-4'].tolist()
     gpt_3 = df['gpt-4-1106-preview'].tolist()
 
-
     # Connect categories across subplots with lines
     for i, cat in enumerate(categories):
-        plt[1].plot([i, i], [gpt_1[i], gpt_2[i]], color='black')
-        plt[2].plot([i, i], [gpt_2[i], gpt_3[i]], color='black')
-"""
+        axs[0].plot([gpt_1[i], gpt_2[i]], [i, i], color='black')
+        axs[0].plot([gpt_2[i], gpt_3[i]], [i, i], color='black')
 
+    # Hide extra rows
+    for i in range(3, 6):
+        axs[i].axis('off')
+
+    plt.title('ECDF Scores per Model and Category')
+    # plt.legend(bbox_to_anchor=(0.5, -1.25), loc='lower center', markerscale=0.1)
+    plt.savefig('../line_distribution.png', dpi = 300)
+    plt.show()
 
 if __name__ == '__main__':
 
